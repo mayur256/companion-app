@@ -1,12 +1,17 @@
 "use client"
 
+// top level imports
+import { ReactElement } from "react";
+import { useRouter } from "next/navigation";
+
 // Prisma client lib
 import { Category, Companion } from "@prisma/client";
 
-// top level imports
-import { ReactElement } from "react";
+// axios lib
+import axios from "axios";
 
 // UI/lucid
+import { useToast } from "@/components/ui/use-toast"
 import {
     Form,
     FormControl,
@@ -63,6 +68,7 @@ export function CompanionForm({ initData, categories }: IProps): ReactElement {
         categoryId: z.string().min(1, { message: 'Category is required!' }),
     })
 
+    // hooks
     // form validation controller
     const form = useForm<z.infer<typeof schema>>({
         resolver: zodResolver(schema),
@@ -75,13 +81,30 @@ export function CompanionForm({ initData, categories }: IProps): ReactElement {
             categoryId: undefined,
         }
     })
-
+    // toastor
+    const { toast } = useToast();
+    const router = useRouter();
+    
     const loading = form.formState.isSubmitting;
 
     /** Handler / Utility functions - starts */
 
     const onSubmit = async (values: z.infer<typeof schema>) => {
-        console.log(values);
+        let message = "";
+        try {
+            if (initData) {
+                // update companion data
+                await axios.patch(`/api/companion/${initData.id}`, values);
+                message = "Companion data updated!";
+            } else {
+                // create a new companion
+                await axios.post("/api/companion", values);
+                message = "Companion created!";
+            }
+            toast({ description: message });
+        } catch (error) {
+            toast({ variant: 'destructive', description: 'Something went wrong!' });
+        }
     }
 
     /** Handler / Utility functions - ends */

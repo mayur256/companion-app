@@ -1,5 +1,6 @@
 // top level imports
 import { ReactNode } from "react"
+import { Toaster } from "@/components/ui/toaster"
 
 // Constituent components
 import { Navbar } from "@/components/Navbar"
@@ -16,6 +17,7 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
             </div>
             <main className="md:pl-20 pt-16 h-full">
                 {children}
+                <Toaster />
             </main>
         </div>
     )
