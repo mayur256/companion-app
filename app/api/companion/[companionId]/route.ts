@@ -57,7 +57,7 @@ export async function DELETE(
 
         // DELETES a companion in the system
         await prismadb.companion.delete({
-            where: { id: params.companionId }
+            where: { id: params.companionId, userId: user.id }
         });
 
         return NextResponse.json({ message: 'Companion deleted' });
