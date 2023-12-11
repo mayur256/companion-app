@@ -11,6 +11,9 @@ import { useCompletion } from "ai/react";
 // Constituent components
 import { ChatHeader } from "../Header";
 import { ChatForm } from "../Form";
+import { ChatMessages } from "../Messages";
+
+import type { IChatMessage } from "../Message";
 
 // props type definition
 interface IChatClient {
@@ -30,7 +33,7 @@ export function ChatClient({ companion }: IChatClient): ReactElement {
     const { input, isLoading, handleInputChange, handleSubmit, setInput } = useCompletion({
         api: `/api/chat/${companion.id}`,
         onFinish: (prompt, completion) => {
-            const sysMsg = { role: 'system', content: completion };
+            const sysMsg: IChatMessage = { role: 'system', content: completion };
 
             setMessages((prevMsgs) => [...prevMsgs, sysMsg]);
             setInput("");
@@ -41,7 +44,7 @@ export function ChatClient({ companion }: IChatClient): ReactElement {
 
     /** Handler / Utility functions - starts */
     const onSubmit = (event: FormEvent<HTMLFormElement>): void => {
-        const newMsg = { role: 'user', content: input };
+        const newMsg: IChatMessage = { role: 'user', content: input };
 
         setMessages((prevMsgs) => [...prevMsgs, newMsg]);
         setInput("");
@@ -55,6 +58,12 @@ export function ChatClient({ companion }: IChatClient): ReactElement {
     return (
         <div className="flex flex-col h-full p-4 space-y-2">
             <ChatHeader companion={companion} />
+
+            <ChatMessages
+                companion={companion}
+                messages={messages}
+                isLoading={isLoading}
+            />
 
             <ChatForm
                 onSubmit={onSubmit}
