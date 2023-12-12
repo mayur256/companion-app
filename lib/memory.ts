@@ -20,17 +20,17 @@ export class MemoryManager {
     private history: Redis;
     private vectorDBClient: Pinecone;
 
-
     public constructor() {
         this.history = Redis.fromEnv();
         this.vectorDBClient = this.initPincone();
     }
 
     private initPincone() {
-        return new Pinecone({
+        const config = {
             apiKey: process.env.PINECONE_API_KEY!,
             environment: process.env.PINECONE_ENVIRONMENT!,
-        });
+        }
+        return new Pinecone();
     }
 
     /**
@@ -43,7 +43,7 @@ export class MemoryManager {
         const pineconeClient = <Pinecone>this.vectorDBClient;
 
         // initialising the database index
-        const pineconeIndex = pineconeClient.Index(process.env.PINECONE_INDEX! || "");
+        const pineconeIndex = pineconeClient.index(process.env.PINECONE_INDEX! || "");
 
         // instantiate a vector store
         const vectorStore = await PineconeStore.fromExistingIndex(
@@ -64,7 +64,7 @@ export class MemoryManager {
     /**
      * @description - Returns an instance of MemoryManager
      */
-    public static async getInstance(): Promise<MemoryManager> {
+    public static getInstance(): MemoryManager {
         if (!MemoryManager.instance) {
             MemoryManager.instance = new MemoryManager();
         }
