@@ -1,4 +1,5 @@
 import { prismadb } from "@/lib/prismadb";
+import { checkSubscription } from "@/lib/subscription";
 import { currentUser } from "@clerk/nextjs";
 import { NextResponse } from "next/server";
 
@@ -24,6 +25,12 @@ export async function PATCH(
 
         if (!params.companionId) {
             return new NextResponse("Companion Id is required", { status: 400 });
+        }
+
+        // Check whether user is subscribed to pro services
+        const hasProSubscription = await checkSubscription();
+        if (!hasProSubscription) {
+            return new NextResponse("Please get a pro subscription to create a companion", { status: 403 })
         }
 
         // create a new companion in the system

@@ -3,7 +3,9 @@
 // top level imports
 import { ReactElement } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import Link from "next/link"
+
+// hooks
+import { useProModal } from "@/hooks/use-modal";
 
 // UI
 import { Home, Plus, Settings } from "lucide-react"
@@ -19,9 +21,12 @@ interface Route {
     label: string;
     isProtected: boolean
 }
+interface IProps {
+    hasProSubscription: boolean | undefined
+}
 
 // Component definition
-export function Sidebar() {
+export function Sidebar({ hasProSubscription }: IProps) {
     // Constants
     const routes: Route[] = [
         {
@@ -44,13 +49,17 @@ export function Sidebar() {
         }
     ];
 
-    // hooks
+    // hook calls
     const pathname = usePathname();
     const router = useRouter();
+    const proModal = useProModal();
 
     /** Handler/Utility functions - starts */
 
     const onNavigate = (url: string, isProtected: boolean): any => {
+        if (isProtected && !hasProSubscription) {
+            proModal.onOpen();
+        }
         router.push(url);
     }
 
