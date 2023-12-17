@@ -1,12 +1,13 @@
 {
-  "name": "my-app",
+  "name": "companion-app",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "postinstall": "prsima generate"
   },
   "dependencies": {
     "@clerk/nextjs": "^4.27.2",
